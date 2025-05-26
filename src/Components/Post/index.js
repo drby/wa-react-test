@@ -6,8 +6,9 @@ import { useQuery } from '@apollo/client'
 import arrayMove from 'array-move'
 
 import postQuery from 'GraphQL/Queries/post.graphql'
+import postsQuery from 'GraphQL/Queries/posts.graphql'
 
-import { ROOT } from 'Router/routes'
+import { POST, ROOT } from 'Router/routes'
 
 import {
   Back,
@@ -41,8 +42,33 @@ function Post() {
   }
 
   const { data, loading } = useQuery(postQuery, { variables: { id: postId } })
+  const { data: postsData } = useQuery(postsQuery)
 
   const post = data?.post || {}
+  const allPosts = postsData?.posts?.data || []
+
+  // Find current post index in the array of all posts
+  const currentPostIndex = allPosts.findIndex(p => p.id === postId)
+
+  // Determine previous and next post IDs
+  const prevPostId =
+    currentPostIndex > 0 ? allPosts[currentPostIndex - 1]?.id : null
+  const nextPostId =
+    currentPostIndex < allPosts.length - 1
+      ? allPosts[currentPostIndex + 1]?.id
+      : null
+
+  const handlePrevClick = () => {
+    if (prevPostId) {
+      history.push(POST(prevPostId))
+    }
+  }
+
+  const handleNextClick = () => {
+    if (nextPostId) {
+      history.push(POST(nextPostId))
+    }
+  }
 
   useEffect(() => {
     setComments(post.comments?.data || [])
@@ -58,13 +84,39 @@ function Post() {
       ) : (
         <>
           <Column>
-            <h4>Need to add next/previous links</h4>
+            <h4>Post Navigation</h4>
             <PostContainer key={post.id}>
               <h3>{post.title}</h3>
               <PostAuthor>by {post.user.name}</PostAuthor>
               <PostBody mt={2}>{post.body}</PostBody>
             </PostContainer>
-            <div>Next/prev here</div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                margin: '20px 0',
+              }}
+            >
+              <button
+                disabled={!prevPostId}
+                style={{ margin: '0 5px', padding: '5px 10px' }}
+                type="button"
+                onClick={handlePrevClick}
+              >
+                Previous
+              </button>
+              <span style={{ margin: '0 10px', lineHeight: '30px' }}>
+                Post {currentPostIndex + 1} of {allPosts.length || 1}
+              </span>
+              <button
+                disabled={!nextPostId}
+                style={{ margin: '0 5px', padding: '5px 10px' }}
+                type="button"
+                onClick={handleNextClick}
+              >
+                Next
+              </button>
+            </div>
           </Column>
 
           <Column>
