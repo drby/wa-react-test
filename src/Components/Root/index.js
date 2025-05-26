@@ -33,7 +33,7 @@ function Root() {
   })
 
   function handlePush() {
-    setFields([{ name: faker.name.findName(), id: nanoid() }, ...fields])
+    setFields([...fields, { name: faker.name.findName(), id: nanoid() }])
   }
 
   function handleAlertClick() {
@@ -117,15 +117,15 @@ function Root() {
       </Column>
 
       <Column>
-        <h4>Incorrect form field behavior</h4>
+        <h4>Correct form field behavior</h4>
         <button type="button" onClick={handlePush}>
           Add more
         </button>
         <ol>
-          {fields.map((field, index) => (
-            <li key={index}>
+          {fields.map(field => (
+            <li key={field.id}>
               {field.name}:<br />
-              <input type="text" />
+              <input key={field.id} type="text" />
             </li>
           ))}
         </ol>
