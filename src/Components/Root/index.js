@@ -23,7 +23,14 @@ function Root() {
   ])
 
   const [value, setValue] = useState('')
-  const { data, loading } = useQuery(postsQuery)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [postsPerPage] = useState(5)
+  const { data, loading } = useQuery(postsQuery, {
+    variables: {
+      page: currentPage,
+      limit: postsPerPage,
+    },
+  })
 
   function handlePush() {
     setFields([{ name: faker.name.findName(), id: nanoid() }, ...fields])
@@ -36,11 +43,13 @@ function Root() {
   }
 
   const posts = data?.posts.data || []
+  const totalCount = data?.posts.meta?.totalCount || 0
+  const totalPages = Math.ceil(totalCount / postsPerPage)
 
   return (
     <Container>
       <Column>
-        <h4>Need to add pagination</h4>
+        <h4>Posts with Pagination</h4>
         {loading
           ? 'Loading...'
           : posts.map(post => (
@@ -52,7 +61,35 @@ function Root() {
                 <PostBody>{post.body}</PostBody>
               </Post>
             ))}
-        <div>Pagination here</div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            margin: '20px 0',
+          }}
+        >
+          <button
+            disabled={currentPage === 1}
+            style={{ margin: '0 5px', padding: '5px 10px' }}
+            type="button"
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+          >
+            Previous
+          </button>
+          <span style={{ margin: '0 10px', lineHeight: '30px' }}>
+            Page {currentPage} of {totalPages || 1}
+          </span>
+          <button
+            disabled={currentPage === totalPages || totalPages === 0}
+            style={{ margin: '0 5px', padding: '5px 10px' }}
+            type="button"
+            onClick={() => {
+              setCurrentPage(prev => Math.min(prev + 1, totalPages))
+            }}
+          >
+            Next
+          </button>
+        </div>
       </Column>
       <Column>
         <h4>Slow rendering</h4>
