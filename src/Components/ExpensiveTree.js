@@ -8,4 +8,5 @@ function ExpensiveTree() {
   return <div />
 }
 
-export default ExpensiveTree
+// Export a memoized version to prevent unnecessary re-renders
+export default React.memo(ExpensiveTree)

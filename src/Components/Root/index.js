@@ -92,7 +92,7 @@ function Root() {
         </div>
       </Column>
       <Column>
-        <h4>Slow rendering</h4>
+        <h4>Slow rendering [fixed]</h4>
         <label>
           Enter something here:
           <br />
@@ -101,7 +101,7 @@ function Root() {
             onChange={({ target }) => setValue(target.value)}
           />
         </label>
-        <p>So slow...</p>
+        <p>Much fast...</p>
         <ExpensiveTree />
 
         <h4>Closures?</h4>
