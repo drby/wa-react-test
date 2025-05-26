@@ -37,8 +37,10 @@ function Root() {
   }
 
   function handleAlertClick() {
+    // Save the current count in a local variable
+    const savedCount = count
     setTimeout(() => {
-      alert(`You clicked ${count} times`)
+      alert(`You clicked ${savedCount} times`)
     }, 2500)
   }
 
